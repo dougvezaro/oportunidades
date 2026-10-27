@@ -1,0 +1,81 @@
+OPORTUNIDADES AÉREAS · VISUAL TURISMO — VERSÃO 1.6
+
+PUBLICAR O APP (GitHub Pages)
+  1. No repositório: Add file > Upload files > envie TODOS os arquivos desta pasta > Commit changes.
+     Arquivos com o mesmo nome são substituídos.
+  2. Settings > Pages > Branch: main / (root) > Save (só na primeira vez).
+  3. Em 1 a 2 minutos o app está no ar. Quem já tem o app instalado recebe a versão nova
+     na segunda vez que abrir.
+
+ATUALIZAR AS SAÍDAS (dia a dia) — pela Área do administrador
+  1. Abra o app no endereço com #admin no final (ex.: https://usuario.github.io/oportunidades/#admin)
+     ou, no aparelho já configurado, menu ⋯ > Área do administrador.
+  2. Digite o PIN.
+  3. Escolha a planilha (qualquer nome de arquivo). O app confere aba e colunas e mostra
+     quantas saídas entram, saem e mudam de preço.
+  4. Toque em Publicar. Em 1 a 2 minutos todos os agentes recebem a versão nova.
+  Errou? Em "Últimas publicações", toque em Restaurar na versão anterior.
+  (Continua valendo o jeito antigo: subir um dados.xlsx pelo site do GitHub.)
+
+PRIMEIRA CONFIGURAÇÃO DA ÁREA DO ADMINISTRADOR (uma vez por aparelho)
+  A. Criar o token no GitHub (pelo computador é mais fácil):
+     1. github.com > sua foto (canto superior direito) > Settings.
+     2. No fim do menu da esquerda: Developer settings > Personal access tokens > Fine-grained tokens.
+     3. Generate new token.
+        - Token name: Oportunidades app
+        - Expiration: 1 ano (anote a data: depois disso, gere outro)
+        - Repository access: Only select repositories > escolha o repositório do app
+        - Permissions > Repository permissions > Contents: Read and write
+     4. Generate token e COPIE o código (começa com github_pat_). Ele só aparece uma vez.
+  B. No app: abra o endereço com #admin, preencha usuário do GitHub, repositório, branch (main),
+     cole o token e crie um PIN de 4 a 6 números. Toque em Testar e salvar.
+  Segurança:
+     - O token fica guardado só naquele aparelho, cifrado com o PIN. Ele não vai para o código do app.
+     - 5 PINs errados bloqueiam a área por 5 minutos.
+     - Trocou de aparelho ou perdeu o celular? No GitHub, apague o token (Fine-grained tokens >
+       Delete) e gere outro. No app, use "Esquecer este aparelho".
+     - Esqueceu o PIN? Toque em "Esquecer este aparelho" e configure de novo com o token.
+
+  A planilha precisa de uma aba "ESTOQUE GERAL" com as colunas:
+    BUSINESS, OD, CIDADE_ORIGEM, CIDADE_DESTINO, DATA_EMBARQUE, DATA_RETORNO,
+    NR_DIAS, NR_NOITES, DS_CIA, PREÇO FINAL C/ TAXA, DISPO.
+  Colunas opcionais (acrescente no fim quando quiser):
+    EXCLUSIVA    escreva SIM nas saídas exclusivas: ganham selo e destaque
+    LOCALIZADOR  aparece no card da saída
+
+  O que o app faz sozinho:
+    - esconde saídas com data de embarque já passada;
+    - junta linhas idênticas, somando os lugares;
+    - marca como "Nova" o que entrou e "Preço baixou" o que ficou mais barato
+      desde a planilha anterior;
+    - saídas que saírem da planilha continuam visíveis por 7 dias como "Esgotado"
+      (cinza, sem compartilhar), e depois somem.
+
+AJUSTES (bloco CONFIG no início do script do index.html)
+  versao                 número exibido no menu
+  linkReserva            endereço do botão "Reservar" do topo
+  diasEsgotadoVisivel    por quantos dias uma saída removida aparece como "Esgotado"
+  ocultarVoosPassados    true = esconde saídas anteriores a hoje
+  regraSemTaxa           null = não mostra; ex.: { tipo: "percentual", valor: 10 }
+  datasPorGrupo          quantas datas aparecem ao abrir uma rota
+  Ao alterar o index.html, mude a VERSAO no início do sw.js (ex.: 1.6.0 -> 1.6.1).
+  Para trocar o link de reserva, substitua o endereço nas 3 vezes em que ele aparece
+  no index.html (procure por "infotravel"): CONFIG, botão do topo e menu.
+
+LINKS DIRETOS (para divulgar)
+  .../#de=São Paulo&para=Maceió
+  .../#de=São Paulo&para=Maceió&mes=2026-12
+  .../#temporada=reveillon   (também: carnaval, semana-santa, julho)
+  .../#area=Internacional    (só internacionais; também: Nacional)
+  .../#ultimos=1             (saídas com até 3 lugares)
+  .../#proximos=30           (saídas nos próximos 30 dias)
+  O menu "Compartilhar esta busca" gera o link da busca atual.
+
+NACIONAL / INTERNACIONAL
+  Seletor no topo (Todas · Nacional · Internacional). Cada aparelho lembra a última escolha.
+  Links que não informam a área abrem em "Todas".
+
+COMPARTILHAR (agentes)
+  "Compartilhar" em cada saída, ou "Compartilhar opções" dentro da rota para marcar várias.
+  Formato: Texto ou Imagem. Identificação: Visual Turismo, Minha agência (nome e logo,
+  salvos só no aparelho do agente) ou Sem identificação.
