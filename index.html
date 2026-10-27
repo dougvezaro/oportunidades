@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Oportunidades Aéreas · Visual Turismo</title>
+<meta name="description" content="Bloqueios aéreos e saídas exclusivas da Visual Turismo: datas, lugares e preços atualizados.">
+<meta name="theme-color" content="#0A3A68">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Oportunidades">
+<meta name="format-detection" content="telephone=no">
+<link rel="preload" href="jost-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="cormorant-garamond-latin-600-italic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="icones.css">
+<script src="xlsx.mini.min.js" defer></script>
+<style>
+@font-face{font-family:'Jost';font-style:normal;font-weight:400;font-display:swap;src:url(jost-latin-400-normal.woff2) format('woff2');}
+@font-face{font-family:'Jost';font-style:normal;font-weight:500;font-display:swap;src:url(jost-latin-500-normal.woff2) format('woff2');}
+@font-face{font-family:'Jost';font-style:normal;font-weight:600;font-display:swap;src:url(jost-latin-600-normal.woff2) format('woff2');}
+@font-face{font-family:'Jost';font-style:normal;font-weight:700;font-display:swap;src:url(jost-latin-700-normal.woff2) format('woff2');}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:600;font-display:swap;src:url(cormorant-garamond-latin-600-italic.woff2) format('woff2');}
+@font-face{font-family:'Cinzel';font-style:normal;font-weight:500;font-display:swap;src:url(cinzel-latin-500-normal.woff2) format('woff2');}
+/* ============================================================
+   IDENTIDADE VISUAL TURISMO
+   Azul-marinho da marca (#0A3A68 → #031322), branco caiado
+   das ilhas gregas e o losango do logo como elemento gráfico.
+   ============================================================ */
+:root{
+  --marinho-600:#0A3A68;
+  --marinho-700:#073159;
+  --marinho-800:#051D35;
+  --marinho-900:#031322;
+  --faixa:#002A50;            /* faixa "COMO CADA EXPERIÊNCIA DEVE SER" */
+  --azul:#1670C2;             /* ações e links */
+  --ceu:#5FBDFA;              /* destaque sobre fundo escuro */
+  --verde:#1A8A55; --verde-bg:#E3F4EB;
+  --ambar:#A86A00; --ambar-bg:#FCF0D9;
+  --vermelho:#B4332B; --vermelho-bg:#FBE5E3;
+
+  --fundo:#F2F5F9;
+  --cartao:#FFFFFF;
+  --linha:#DFE6EE;
+  --texto:#0A2240;
+  --texto-2:#4F6580;
+  --texto-3:#8195AB;
+  --preco:#0A3A68;
+
+  --serif:'Cormorant Garamond', Georgia, serif;
+  --capitular:'Cinzel', 'Times New Roman', serif;
+  --sans:'Jost', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-left:env(safe-area-inset-left,0px);
+  --safe-right:env(safe-area-inset-right,0px);
+  --gutter:16px;
+  --ease:200ms cubic-bezier(.4,0,.2,1);
+  color-scheme:light;
+}
+body.dark{
+  --fundo:#04121F;
+  --cartao:#0A2038;
+  --linha:#16304D;
+  --texto:#EAF1F8;
+  --texto-2:#A3B6CA;
+  --texto-3:#6E86A0;
+  --preco:#8FD0FB;
+  --azul:#5FBDFA;
+  --verde:#5BD394; --verde-bg:rgba(91,211,148,.14);
+  --ambar:#F5C25B; --ambar-bg:rgba(245,194,91,.14);
+  --vermelho:#FF8A80; --vermelho-bg:rgba(255,138,128,.14);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0; background:var(--fundo); color:var(--texto);
+  font:400 15px/1.45 var(--sans);
+  overflow-x:hidden;
+  padding-bottom:calc(40px + var(--safe-bottom));
+}
+button,input,select{font-family:inherit; color:inherit;}
+button{cursor:pointer;}
+:focus-visible{outline:2px solid var(--ceu); outline-offset:2px;}
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap;}
+.wrap{max-width:1180px; margin:0 auto; padding-left:calc(var(--gutter) + var(--safe-left)); padding-right:calc(var(--gutter) + var(--safe-right));}
+
+/* ---------- Splash ---------- */
+#splash{
+  position:fixed; inset:0; z-index:9999; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:26px;
+  background:linear-gradient(180deg, var(--marinho-600), var(--marinho-900));
+  transition:opacity .45s ease, visibility .45s ease;
+}
+#splash.hide{opacity:0; visibility:hidden; pointer-events:none;}
+#splash img{width:200px; height:auto;}
+#splash .linha-carga{width:120px; height:2px; background:rgba(255,255,255,.18); overflow:hidden; border-radius:2px;}
+#splash .linha-carga::after{content:""; display:block; width:40%; height:100%; background:#fff; animation:carga 1.1s ease-in-out infinite;}
+@keyframes carga{0%{transform:translateX(-100%);}100%{transform:translateX(250%);}}
+
+/* ---------- Hero ---------- */
+.hero{
+  position:relative; overflow:hidden; color:#fff;
+  background:linear-gradient(180deg, var(--marinho-600) 0%, var(--marinho-700) 55%, var(--marinho-800) 100%);
+  padding-top:calc(14px + var(--safe-top));
+}
+.hero-arte{
+  position:absolute; top:0; right:0; bottom:0; width:min(78%, 640px);
+  background:url("hero.jpg") right center / cover no-repeat;
+  -webkit-mask-image:linear-gradient(90deg, transparent 0%, transparent 18%, rgba(0,0,0,.45) 48%, #000 80%);
+          mask-image:linear-gradient(90deg, transparent 0%, transparent 18%, rgba(0,0,0,.45) 48%, #000 80%);
+  opacity:.9;
+}
+.hero::after{ /* escurece a base para dar leitura aos números */
+  content:""; position:absolute; left:0; right:0; bottom:0; height:55%;
+  background:linear-gradient(180deg, transparent, rgba(3,19,34,.85));
+  pointer-events:none;
+}
+.hero > .wrap{position:relative; z-index:1;}
+.hero-top{display:flex; align-items:center; justify-content:space-between; gap:12px;}
+.hero-top .logo{height:40px; width:auto; display:block;}
+.btn-tema{
+  width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.35);
+  background:rgba(3,19,34,.35); color:#fff; font-size:16px;
+  display:grid; place-items:center; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+}
+.hero h1{
+  margin:34px 0 4px; max-width:12ch;
+  font:italic 600 clamp(40px, 11vw, 64px)/.95 var(--serif); letter-spacing:-.5px;
+  text-shadow:0 2px 18px rgba(3,19,34,.55);
+}
+.hero .sub{margin:0; font-size:15px; font-weight:500; color:rgba(255,255,255,.85); max-width:26ch; text-shadow:0 1px 10px rgba(3,19,34,.6);}
+.numeros{
+  display:grid; grid-template-columns:repeat(4, 1fr); margin:28px 0 0;
+  border-top:1px solid rgba(255,255,255,.22);
+}
+.numeros div{padding:12px 0 16px; border-left:1px solid rgba(255,255,255,.14); padding-left:10px;}
+.numeros div:first-child{border-left:none; padding-left:0;}
+.numeros b{display:block; font:600 20px/1.1 var(--sans); font-variant-numeric:tabular-nums;}
+.numeros span{font-size:12.5px; color:rgba(255,255,255,.72);}
+
+/* ---------- Barra fixa de busca ---------- */
+body::before{ /* cobre a barra de status do iPhone quando o app está instalado */
+  content:""; position:fixed; left:0; right:0; top:0; height:var(--safe-top); z-index:600; background:var(--marinho-800);
+}
+.barra{
+  position:-webkit-sticky; position:sticky; top:var(--safe-top); z-index:500;
+  background:var(--marinho-800); padding:10px 0 12px;
+  box-shadow:0 6px 18px rgba(3,19,34,.25);
+}
+.busca-linha{display:flex; gap:8px;}
+.busca{position:relative; flex:1; min-width:0;}
+.busca i{position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--texto-3); font-size:15px; pointer-events:none;}
+#globalSearch{
+  width:100%; height:48px; border:none; border-radius:999px; outline:none;
+  padding:0 44px 0 44px; font-size:16px; background:#fff; color:#0A2240;
+  -webkit-appearance:none; appearance:none;
+}
+#globalSearch::placeholder{color:#8195AB;}
+#globalSearch::-webkit-search-cancel-button{display:none;}
+#searchClear{
+  position:absolute; right:6px; top:50%; transform:translateY(-50%);
+  width:36px; height:36px; border-radius:50%; border:none; background:#EEF2F7; color:#4F6580;
+  display:none; place-items:center;
+}
+.btn-filtros{
+  position:relative; flex:none; height:48px; padding:0 16px; border-radius:999px;
+  border:1px solid rgba(255,255,255,.3); background:transparent; color:#fff;
+  font-size:15px; font-weight:600; display:flex; align-items:center; gap:8px;
+}
+#filterCountBadge{
+  min-width:20px; height:20px; padding:0 6px; border-radius:10px; background:var(--ceu); color:var(--marinho-900);
+  font-size:12px; font-weight:700; display:none; align-items:center; justify-content:center;
+}
+.chips{display:flex; gap:8px; margin-top:10px; overflow-x:auto; scrollbar-width:none; padding-bottom:2px;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{
+  flex:none; height:36px; padding:0 14px; border-radius:999px; font-size:14px; font-weight:500;
+  border:1px solid rgba(255,255,255,.28); background:transparent; color:rgba(255,255,255,.88);
+  display:flex; align-items:center; gap:7px; transition:background var(--ease), color var(--ease);
+}
+.chip[aria-pressed="true"]{background:#fff; color:var(--marinho-700); border-color:#fff; font-weight:600;}
+.chip .losango{width:8px; height:8px; background:currentColor; transform:rotate(45deg); flex:none;}
+.status{
+  display:flex; align-items:center; gap:7px; margin-top:10px; font-size:13px; color:rgba(255,255,255,.75);
+  background:none; border:none; padding:0;
+}
+.status .dot{width:7px; height:7px; border-radius:50%; background:#5BD394; flex:none;}
+.status.offline .dot{background:#F5C25B;}
+.status.checking .dot{background:rgba(255,255,255,.6); animation:pulsa 1s ease-in-out infinite;}
+@keyframes pulsa{50%{opacity:.25;}}
+
+/* ---------- Aviso de instalação ---------- */
+.instalar{
+  margin-top:16px; padding:14px 14px 14px 16px; border-radius:14px;
+  background:var(--cartao); border:1px solid var(--linha);
+  display:flex; gap:12px; align-items:flex-start; font-size:14.5px; line-height:1.45;
+}
+.instalar[hidden]{display:none;}
+.instalar > i{color:var(--azul); font-size:18px; margin-top:2px;}
+.instalar .txt{flex:1;}
+.instalar .fechar{background:none; border:none; color:var(--texto-3); font-size:17px; width:32px; height:32px; margin:-6px -6px 0 0;}
+.instalar .acoes{margin-top:10px;}
+
+/* ---------- Barra de resultados ---------- */
+.resultado{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:22px 0 6px;
+}
+.resultado .conta{flex:1; min-width:140px; font-size:14.5px; color:var(--texto-2);}
+.resultado .conta b{color:var(--texto); font-weight:600;}
+.ordem{position:relative;}
+.ordem select{
+  height:40px; border:1px solid var(--linha); border-radius:999px; background:var(--cartao); color:var(--texto);
+  font-size:16px; font-weight:500; padding:0 34px 0 14px; -webkit-appearance:none; appearance:none; outline:none;
+}
+.ordem i{position:absolute; right:14px; top:50%; transform:translateY(-50%); font-size:11px; color:var(--texto-3); pointer-events:none;}
+.acoes-lista{display:flex; gap:6px;}
+.btn-icone{
+  width:40px; height:40px; border-radius:50%; border:1px solid var(--linha); background:var(--cartao);
+  color:var(--azul); font-size:15px; display:grid; place-items:center;
+}
+
+/* ---------- Lista ---------- */
+#resultsGrid{display:grid; grid-template-columns:1fr; gap:12px; padding-bottom:20px;}
+@media(min-width:700px){ #resultsGrid{grid-template-columns:1fr 1fr;} }
+@media(min-width:1060px){ #resultsGrid{grid-template-columns:1fr 1fr 1fr;} }
+.mes{
+  grid-column:1/-1; display:flex; align-items:center; gap:12px; margin:16px 0 0;
+  font:italic 600 24px/1.1 var(--serif); color:var(--texto);
+}
+.mes::after{content:""; flex:1; height:1px; background:var(--linha);}
+.mes small{font:500 13px var(--sans); color:var(--texto-3); font-style:normal; order:2;}
+
+/* Cartão de bloqueio */
+.voo{
+  background:var(--cartao); border:1px solid var(--linha); border-radius:14px;
+  padding:16px; display:flex; flex-direction:column; gap:14px;
+}
+.voo-topo{display:flex; justify-content:space-between; gap:12px; align-items:flex-start;}
+.rota{min-width:0;}
+.rota .cidades{font-size:18px; font-weight:600; line-height:1.25; color:var(--texto);}
+.rota .cidades .seta{display:inline-block; width:7px; height:7px; background:var(--azul); transform:rotate(45deg); margin:0 8px 3px; vertical-align:middle;}
+.rota .codigos{font-size:13px; color:var(--texto-3); margin-top:2px; letter-spacing:.3px;}
+.preco{text-align:right; flex:none;}
+.preco b{display:block; font-size:21px; font-weight:700; color:var(--preco); font-variant-numeric:tabular-nums; line-height:1.1; white-space:nowrap;}
+.preco span{font-size:12.5px; color:var(--texto-3);}
+.preco .consulta{font-size:16px; font-weight:600; color:var(--preco);}
+.datas{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:12px 0; border-top:1px solid var(--linha); border-bottom:1px solid var(--linha);}
+.datas .lbl{font-size:12.5px; color:var(--texto-3);}
+.datas .d{font-size:16px; font-weight:600; font-variant-numeric:tabular-nums;}
+.datas .d small{font-size:13px; font-weight:500; color:var(--texto-2); margin-left:4px;}
+.voo-base{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.lugares{
+  display:inline-flex; align-items:center; gap:6px; height:28px; padding:0 10px; border-radius:999px;
+  font-size:13.5px; font-weight:600; background:var(--verde-bg); color:var(--verde);
+}
+.lugares.low{background:var(--ambar-bg); color:var(--ambar);}
+.lugares.none{background:var(--vermelho-bg); color:var(--vermelho);}
+.meta{font-size:13.5px; color:var(--texto-2); flex:1; min-width:0;}
+.meta b{font-weight:600; color:var(--texto);}
+.btn-enviar{
+  width:40px; height:40px; border-radius:50%; border:1px solid var(--linha); background:transparent; color:var(--azul);
+  display:grid; place-items:center; font-size:15px; flex:none;
+}
+
+/* Cartão Exclusiva: o elemento de destaque do app */
+.voo.exclusiva{padding:0; overflow:hidden; border:none; background:var(--faixa); color:#fff;}
+.exclusiva .capa{
+  position:relative; height:132px; background:url("exclusiva.jpg") center 60% / cover no-repeat;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+}
+.exclusiva .capa::before{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(3,19,34,.25), rgba(0,42,80,.85));}
+.exclusiva .selo{position:relative; display:flex; align-items:center; gap:10px; font:500 30px/1 var(--capitular); letter-spacing:2px;}
+.exclusiva .selo::before, .exclusiva .selo::after{content:""; width:9px; height:9px; background:#fff; transform:rotate(45deg);}
+.exclusiva .tag{position:relative; font:500 10.5px/1 var(--capitular); letter-spacing:2.5px; background:var(--faixa); padding:5px 10px;}
+.exclusiva .corpo{padding:16px; display:flex; flex-direction:column; gap:14px;}
+.exclusiva .rota .cidades, .exclusiva .datas .d{color:#fff;}
+.exclusiva .rota .cidades .seta{background:var(--ceu);}
+.exclusiva .rota .codigos, .exclusiva .datas .lbl, .exclusiva .preco span{color:rgba(255,255,255,.65);}
+.exclusiva .datas .d small, .exclusiva .meta{color:rgba(255,255,255,.8);}
+.exclusiva .meta b{color:#fff;}
+.exclusiva .preco b, .exclusiva .preco .consulta{color:#fff;}
+.exclusiva .datas{border-color:rgba(255,255,255,.18);}
+.exclusiva .btn-enviar{border-color:rgba(255,255,255,.3); color:#fff;}
+.exclusiva .lugares{background:rgba(91,211,148,.18); color:#7FE3AE;}
+
+.vazio{grid-column:1/-1; text-align:center; padding:56px 20px; color:var(--texto-2);}
+.vazio .marca{width:56px; height:56px; margin:0 auto 14px; opacity:.35;}
+.vazio h3{margin:0 0 6px; font:italic 600 26px/1.15 var(--serif); color:var(--texto);}
+.vazio p{margin:0 auto; max-width:34ch;}
+#sentinel{grid-column:1/-1; text-align:center; padding:16px; color:var(--texto-3); font-size:13px;}
+
+/* ---------- Botões ---------- */
+.btn{
+  height:48px; padding:0 18px; border-radius:999px; border:none; font-size:15.5px; font-weight:600;
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+}
+.btn-primario{background:var(--marinho-600); color:#fff;}
+body.dark .btn-primario{background:var(--ceu); color:var(--marinho-900);}
+.btn-linha{background:transparent; border:1px solid var(--linha); color:var(--texto);}
+
+/* ---------- Painel de filtros (folha inferior) ---------- */
+.folha-fundo{
+  position:fixed; inset:0; z-index:8000; background:rgba(3,19,34,.55);
+  opacity:0; visibility:hidden; transition:opacity var(--ease), visibility var(--ease);
+}
+.folha-fundo.aberta{opacity:1; visibility:visible;}
+.folha{
+  position:fixed; left:0; right:0; bottom:0; z-index:8001; max-height:88vh; max-height:88dvh;
+  background:var(--cartao); border-radius:20px 20px 0 0; display:flex; flex-direction:column;
+  transform:translateY(102%); transition:transform 260ms cubic-bezier(.3,.8,.3,1);
+  box-shadow:0 -10px 40px rgba(3,19,34,.3);
+}
+.folha.aberta{transform:none;}
+@media(min-width:700px){ .folha{left:50%; right:auto; width:560px; transform:translate(-50%,102%);} .folha.aberta{transform:translate(-50%,0);} }
+.folha-cab{display:flex; align-items:center; justify-content:space-between; padding:18px 20px 8px;}
+.folha-cab h2{margin:0; font:italic 600 28px/1 var(--serif);}
+.folha-cab button{width:40px; height:40px; border-radius:50%; border:none; background:var(--fundo); color:var(--texto-2); font-size:16px;}
+.folha-corpo{overflow-y:auto; padding:6px 20px 12px; -webkit-overflow-scrolling:touch;}
+.campos{display:grid; grid-template-columns:1fr 1fr; gap:14px 12px;}
+.campo{display:flex; flex-direction:column; gap:6px; min-width:0;}
+.campo.inteiro{grid-column:1/-1;}
+.campo label{font-size:13.5px; font-weight:500; color:var(--texto-2);}
+.campo select, .campo input{
+  width:100%; min-width:0; height:48px; border:1px solid var(--linha); border-radius:12px;
+  background:var(--fundo); color:var(--texto); font-size:16px; padding:0 12px; outline:none;
+  -webkit-appearance:none; appearance:none;
+}
+.campo select{
+  padding-right:34px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%238195AB'/></svg>");
+  background-repeat:no-repeat; background-position:right 14px center;
+}
+.campo select:focus, .campo input:focus{border-color:var(--azul);}
+.alternar{
+  grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:12px 14px; border:1px solid var(--linha); border-radius:12px; font-size:15px;
+}
+.switch{position:relative; width:48px; height:28px; flex:none;}
+.switch input{position:absolute; opacity:0; inset:0; margin:0;}
+.switch span{position:absolute; inset:0; border-radius:14px; background:var(--linha); transition:background var(--ease);}
+.switch span::before{content:""; position:absolute; width:22px; height:22px; left:3px; top:3px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.3); transition:transform var(--ease);}
+.switch input:checked + span{background:var(--azul);}
+.switch input:checked + span::before{transform:translateX(20px);}
+.folha-rodape{display:flex; gap:10px; padding:12px 20px calc(14px + var(--safe-bottom)); border-top:1px solid var(--linha);}
+.folha-rodape .btn{flex:1;}
+
+/* ---------- Flutuantes ---------- */
+#backToTop{
+  position:fixed; right:calc(16px + var(--safe-right)); bottom:calc(20px + var(--safe-bottom)); z-index:400;
+  width:48px; height:48px; border-radius:50%; border:none; background:var(--marinho-600); color:#fff; font-size:16px;
+  box-shadow:0 8px 24px rgba(3,19,34,.35); display:grid; place-items:center;
+  opacity:0; transform:translateY(16px); pointer-events:none; transition:opacity var(--ease), transform var(--ease);
+}
+#backToTop.show{opacity:1; transform:none; pointer-events:auto;}
+#toast{
+  position:fixed; left:50%; bottom:calc(84px + var(--safe-bottom)); z-index:9000; transform:translate(-50%,12px);
+  background:var(--marinho-900); color:#fff; padding:12px 20px; border-radius:999px; font-size:14.5px; font-weight:500;
+  opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; max-width:90vw; text-align:center;
+}
+#toast.show{opacity:1; transform:translate(-50%,0);}
+
+@media(max-width:374px){
+  .numeros{grid-template-columns:1fr 1fr;}
+  .numeros div:nth-child(3){border-left:none; padding-left:0;}
+  .campos{grid-template-columns:1fr;}
+}
+@media print{
+  .hero, .barra, .resultado, #backToTop, #splash, .instalar, .btn-enviar{display:none !important;}
+  body{background:#fff; padding:0;}
+  #resultsGrid{display:block;}
+  .voo{break-inside:avoid; margin-bottom:10px;}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important; transition-duration:.01ms !important;}
+}
+</style>
+</head>
+<body>
+<noscript><p style="max-width:420px;margin:60px auto;padding:24px;font-family:sans-serif;text-align:center">Ative o JavaScript do navegador para usar este app.</p></noscript>
+<script>setTimeout(function(){var s=document.getElementById('splash');if(s)s.classList.add('hide');},8000);</script>
+
+<div id="splash" aria-hidden="true">
+  <img src="logo-visual.png" alt="">
+  <div class="linha-carga"></div>
+</div>
+
+<header class="hero">
+  <div class="hero-arte" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="hero-top">
+      <img class="logo" src="logo-visual.png" alt="Visual Turismo" width="241" height="78">
+      <button class="btn-tema" id="darkToggle" aria-label="Alternar tema claro ou escuro"><i class="fa-solid fa-moon"></i></button>
+    </div>
+    <h1>Oportunidades aéreas</h1>
+    <p class="sub">Bloqueios e saídas exclusivas, com datas, lugares e preços atualizados.</p>
+    <div class="numeros">
+      <div><b id="indTotal">0</b><span>saídas</span></div>
+      <div><b id="indLugares">0</b><span>lugares</span></div>
+      <div><b id="indRotas">0</b><span>rotas</span></div>
+      <div><b id="indCias">0</b><span>companhias</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="barra">
+  <div class="wrap">
+    <div class="busca-linha">
+      <div class="busca">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <input type="search" id="globalSearch" enterkeyhint="search" autocomplete="off" placeholder="Buscar cidade ou rota" aria-label="Buscar">
+        <button id="searchClear" aria-label="Limpar busca"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <button class="btn-filtros" id="btnFiltros" aria-haspopup="dialog"><i class="fa-solid fa-sliders"></i><span class="rotulo">Filtros</span><span id="filterCountBadge"></span></button>
+    </div>
+    <div class="chips" role="group" aria-label="Atalhos">
+      <button class="chip" data-chip="" aria-pressed="true">Todas</button>
+      <button class="chip" data-chip="Nacional" aria-pressed="false">Nacionais</button>
+      <button class="chip" data-chip="Internacional" aria-pressed="false">Internacionais</button>
+      <button class="chip" data-chip="excl" aria-pressed="false"><span class="losango"></span>Exclusivas</button>
+    </div>
+    <button class="status checking" id="statusLine" aria-live="polite"><span class="dot"></span><span id="statusText">Verificando atualizações…</span></button>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="instalar" id="installBanner" hidden>
+    <i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i>
+    <div class="txt" id="installText"></div>
+    <button class="fechar" id="installClose" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+
+  <div class="resultado">
+    <div class="conta"><b id="countNum">0</b> saídas encontradas</div>
+    <div class="ordem">
+      <label for="sortSelect" class="sr-only">Ordenar</label>
+      <select id="sortSelect">
+        <option value="data_asc">Data mais próxima</option>
+        <option value="data_desc">Data mais distante</option>
+        <option value="preco_asc">Menor preço</option>
+        <option value="preco_desc">Maior preço</option>
+        <option value="lugares_desc">Mais lugares</option>
+        <option value="destino">Destino A–Z</option>
+        <option value="origem">Origem A–Z</option>
+      </select>
+      <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+    </div>
+    <div class="acoes-lista">
+      <button class="btn-icone" id="btnExport" aria-label="Exportar para Excel" title="Exportar para Excel"><i class="fa-solid fa-file-excel"></i></button>
+      <button class="btn-icone" id="btnShare" aria-label="Compartilhar link do app" title="Compartilhar link do app"><i class="fa-solid fa-share-nodes"></i></button>
+      <button class="btn-icone" id="btnPrint" aria-label="Imprimir" title="Imprimir"><i class="fa-solid fa-print"></i></button>
+    </div>
+  </div>
+
+  <div id="resultsGrid"></div>
+</main>
+
+<div class="folha-fundo" id="folhaFundo"></div>
+<section class="folha" id="folha" role="dialog" aria-modal="true" aria-labelledby="folhaTitulo" aria-hidden="true">
+  <div class="folha-cab">
+    <h2 id="folhaTitulo">Filtros</h2>
+    <button id="folhaFechar" aria-label="Fechar filtros"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="folha-corpo">
+    <div class="campos">
+      <div class="campo"><label for="fOrigem">Origem</label><select id="fOrigem"></select></div>
+      <div class="campo"><label for="fDestino">Destino</label><select id="fDestino"></select></div>
+      <div class="campo"><label for="fCia">Companhia</label><select id="fCia"></select></div>
+      <div class="campo"><label for="fArea">Área</label><select id="fArea"><option value="">Todas</option><option>Nacional</option><option>Internacional</option></select></div>
+      <div class="campo"><label for="fDataIni">Saída a partir de</label><input type="date" id="fDataIni"></div>
+      <div class="campo"><label for="fDataFim">Saída até</label><input type="date" id="fDataFim"></div>
+      <div class="campo"><label for="fLugaresMin">Mínimo de lugares</label><input type="number" id="fLugaresMin" min="1" inputmode="numeric" placeholder="Ex.: 4"></div>
+      <div class="campo"><label for="fValorMax">Valor máximo (R$)</label><input type="number" id="fValorMax" min="0" inputmode="numeric" placeholder="Ex.: 2000"></div>
+      <label class="alternar" for="fExclusivas">Somente saídas exclusivas
+        <span class="switch"><input type="checkbox" id="fExclusivas"><span></span></span>
+      </label>
+    </div>
+  </div>
+  <div class="folha-rodape">
+    <button class="btn btn-linha" id="btnLimpar">Limpar</button>
+    <button class="btn btn-primario" id="btnVerResultados">Ver saídas</button>
+  </div>
+</section>
+
+<button id="backToTop" aria-label="Voltar ao topo"><i class="fa-solid fa-arrow-up"></i></button>
+<div id="toast" role="status"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ----------------------------------------------------------------
+     0. CONFIGURAÇÕES (pode editar)
+     ---------------------------------------------------------------- */
+  const CONFIG = {
+    arquivoDados: "dados.xlsx",
+    abaEstoque: "estoque geral",
+    abaExclusivos: "exclusivos",
+    ocultarVoosPassados: true,
+    // Regra do "valor sem taxa". null = não mostrar.
+    // Ex.: { tipo: "percentual", valor: 10 } ou { tipo: "fixo", valor: 100 }
+    regraSemTaxa: null,
+    reverificarAposMinutos: 5
+  };
+
+  /* ----------------------------------------------------------------
+     1. UTILITÁRIOS
+     ---------------------------------------------------------------- */
+  const CITY_MAP = {
+    AEP: ["Buenos Aires", "Aeroparque"], AJU: ["Aracaju"], AUA: ["Aruba", "Oranjestad"],
+    BEL: ["Belém"], BPS: ["Porto Seguro"], BRC: ["Bariloche"],
+    BSB: ["Brasília"], BYO: ["Bonito"], CGB: ["Cuiabá"], CGH: ["São Paulo", "Congonhas"],
+    CGR: ["Campo Grande"], CLV: ["Caldas Novas"], CNF: ["Belo Horizonte", "Confins"],
+    CPH: ["Copenhague"], CPT: ["Cidade do Cabo"], CUR: ["Curaçao"], CUZ: ["Cusco"],
+    CWB: ["Curitiba"], EZE: ["Buenos Aires", "Ezeiza"], FEN: ["Fernando de Noronha"],
+    FLN: ["Florianópolis"], FOR: ["Fortaleza"], FTE: ["El Calafate"],
+    GIG: ["Rio de Janeiro", "Galeão"], GRU: ["São Paulo", "Guarulhos"], GYN: ["Goiânia"],
+    IGU: ["Foz do Iguaçu"], IOS: ["Ilhéus"], JJD: ["Jericoacoara"], JOI: ["Joinville"],
+    JPA: ["João Pessoa"], LDB: ["Londrina"], LIS: ["Lisboa"], MAO: ["Manaus"],
+    MCO: ["Orlando"], MCP: ["Macapá"], MCZ: ["Maceió"], MDZ: ["Mendoza"],
+    MGF: ["Maringá"], MIA: ["Miami"], MVD: ["Montevidéu"], NAT: ["Natal"],
+    NVT: ["Navegantes", "Balneário Camboriú"], OPS: ["Sinop"], PDP: ["Punta del Este"],
+    PMW: ["Palmas"], POA: ["Porto Alegre"], PRG: ["Praga"], PUJ: ["Punta Cana"],
+    PVH: ["Porto Velho"], RAO: ["Ribeirão Preto"], RBR: ["Rio Branco"], REC: ["Recife"],
+    SCL: ["Santiago"], SDU: ["Rio de Janeiro", "Santos Dumont"], SJP: ["São José do Rio Preto"],
+    SLA: ["Salta"], SLZ: ["São Luís"], SSA: ["Salvador"], THE: ["Teresina"],
+    UDI: ["Uberlândia"], UNA: ["Una", "Comandatuba"], USH: ["Ushuaia"],
+    VCP: ["Campinas", "Viracopos"], VIX: ["Vitória"], XAP: ["Chapecó"],
+    JNB: ["Joanesburgo"], JTC: ["Bauru"]
+  };
+  const CITY_NAMES = {"BELEM": "Belém", "BRASILIA": "Brasília", "CALAFATE": "El Calafate", "CAPE TOWN": "Cidade do Cabo", "CHAPECO": "Chapecó", "COPENHAGEN": "Copenhague", "CUIABA": "Cuiabá", "FLORIANOPOLIS": "Florianópolis", "FOZ DO IGUACU": "Foz do Iguaçu", "GOIANIA": "Goiânia", "ILHEUS": "Ilhéus", "JOAO PESSOA": "João Pessoa", "MACAPA": "Macapá", "MACEIO": "Maceió", "MARABA": "Marabá", "MARINGA": "Maringá", "MONTEVIDEO": "Montevidéu", "MONTEVIDEU": "Montevidéu", "NAO INFORMADO": "Não informado", "NEW YORK": "Nova York", "RIBEIRAO PRETO": "Ribeirão Preto", "SAO JOSE DO RIO PRETO": "São José do Rio Preto", "SAO LUIS": "São Luís", "SAO PAULO": "São Paulo", "SAO PAULO (GUARULHOS)": "São Paulo (Guarulhos)", "UBERLANDIA": "Uberlândia", "VITORIA": "Vitória"};
+
+  const $ = (id) => document.getElementById(id);
+  const grid = $("resultsGrid");
+  const MARCA_SVG = '<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="3"/><g fill="currentColor"><path d="M32.4 28l14.9 14.9-14.9 14.9-14.9-14.9z"/><path d="M67.6 28l14.9 14.9-14.9 14.9-14.9-14.9z"/><path d="M50 45.6l14.9 14.9L50 75.4 35.1 60.5z"/></g></svg>';
+  const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  const DIAS = ["dom","seg","ter","qua","qui","sex","sáb"];
+
+  function stripAccents(s) { return String(s == null ? "" : s).normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+  function normKey(s) { return stripAccents(s).toUpperCase().replace(/\s+/g, " ").trim(); }
+  function cityName(raw) {
+    const k = normKey(raw);
+    if (!k) return "";
+    if (CITY_NAMES[k]) return CITY_NAMES[k];
+    const small = { de: 1, do: 1, da: 1, dos: 1, das: 1, e: 1, del: 1, la: 1 };
+    return k.toLowerCase().split(" ").map((w, i) => (i && small[w]) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  }
+  function cityFromIata(code) { const e = CITY_MAP[normKey(code)]; return e ? e[0] : normKey(code); }
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+  const pad = (n) => String(n).padStart(2, "0");
+  function todayISO() { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+  function toISODate(v) {
+    if (v == null || v === "") return null;
+    if (typeof v === "number" && isFinite(v)) { const p = XLSX.SSF.parse_date_code(v); return p ? `${p.y}-${pad(p.m)}-${pad(p.d)}` : null; }
+    if (v instanceof Date && !isNaN(v)) return `${v.getFullYear()}-${pad(v.getMonth() + 1)}-${pad(v.getDate())}`;
+    const s = String(v).trim();
+    let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if (m) return `${m[3]}-${pad(m[2])}-${pad(m[1])}`;
+    m = s.match(/^(\d{4})-(\d{2})-(\d{2})/); if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+    return null;
+  }
+  function toNumber(v) {
+    if (v == null || v === "") return null;
+    if (typeof v === "number") return v;
+    let s = String(v).replace(/[^\d.,-]/g, "");
+    if (s.includes(",")) s = s.replace(/\./g, "").replace(",", ".");
+    const n = parseFloat(s); return isNaN(n) ? null : n;
+  }
+  function fmtDateBR(iso) { if (!iso) return "—"; const p = String(iso).split("-"); return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : iso; }
+  function weekday(iso) { if (!iso) return ""; const [y, m, d] = iso.split("-").map(Number); return DIAS[new Date(y, m - 1, d).getDay()]; }
+  function fmtCurrency(v) { if (v == null || v === "" || isNaN(v)) return null; return Number(v).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }); }
+  function fmtStamp(ms) { const d = new Date(ms); return `${pad(d.getDate())}/${pad(d.getMonth() + 1)} às ${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+  function valorSemTaxa(valor) {
+    const r = CONFIG.regraSemTaxa; if (!r || valor == null) return null;
+    const v = r.tipo === "percentual" ? valor * (1 - r.valor / 100) : valor - r.valor;
+    return v > 0 ? Math.round(v * 100) / 100 : null;
+  }
+
+  /* ----------------------------------------------------------------
+     2. LEITURA DA PLANILHA
+     ---------------------------------------------------------------- */
+  function findSheet(wb, needle) {
+    const n = normKey(needle);
+    const name = wb.SheetNames.find(s => normKey(s) === n) || wb.SheetNames.find(s => normKey(s).includes(n));
+    return name ? wb.Sheets[name] : null;
+  }
+  function sheetRows(ws) {
+    return XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: null, blankrows: false });
+  }
+  // Acha a linha de cabeçalho e devolve { index, col(nome) }
+  function headerInfo(rows, mustHave) {
+    const idx = rows.findIndex(r => r && r.some(c => normKey(c) === mustHave));
+    if (idx < 0) return null;
+    const H = rows[idx].map(normKey);
+    const col = (...names) => {
+      for (const nm of names) {
+        const i = H.findIndex(h => h === nm || h.startsWith(nm));
+        if (i >= 0) return i;
+      }
+      return -1;
+    };
+    return { index: idx, col };
+  }
+
+  function parseWorkbook(buf) {
+    const wb = XLSX.read(buf, { type: "array" });
+    const out = [];
+    const avisos = [];
+
+    // --- Aba Estoque Geral (obrigatória)
+    const ws = findSheet(wb, CONFIG.abaEstoque);
+    if (!ws) throw new Error('A aba "Estoque Geral" não foi encontrada na planilha.');
+    const rows = sheetRows(ws);
+    const h = headerInfo(rows, "DATA_EMBARQUE");
+    if (!h) throw new Error('Cabeçalho da aba "Estoque Geral" não encontrado (coluna DATA_EMBARQUE).');
+    const C = {
+      area: h.col("BUSINESS"), od: h.col("OD"), orig: h.col("CIDADE_ORIGEM"), dest: h.col("CIDADE_DESTINO"),
+      ds: h.col("DATA_EMBARQUE"), dr: h.col("DATA_RETORNO"), dias: h.col("NR_DIAS"), noites: h.col("NR_NOITES"),
+      cia: h.col("DS_CIA"), valor: h.col("PRECO FINAL"), lug: h.col("DISPO")
+    };
+    const faltando = Object.entries(C).filter(([, i]) => i < 0).map(([k]) => k);
+    if (faltando.length) throw new Error("Colunas não encontradas na aba Estoque Geral: " + faltando.join(", "));
+
+    for (let i = h.index + 1; i < rows.length; i++) {
+      const r = rows[i];
+      const ds = toISODate(r[C.ds]);
+      if (!ds || !r[C.orig]) continue;
+      const area = normKey(r[C.area]);
+      out.push({
+        tipo: "Bloqueio",
+        origem: cityName(r[C.orig]),
+        destino: cityName(r[C.dest]),
+        rota: normKey(r[C.od]) || null,
+        ds, dr: toISODate(r[C.dr]),
+        dias: toNumber(r[C.dias]), noites: toNumber(r[C.noites]),
+        cia: normKey(r[C.cia]),
+        valor: toNumber(r[C.valor]),
+        lug: toNumber(r[C.lug]),
+        area: area === "INTERNACIONAL" ? "Internacional" : area === "NACIONAL" ? "Nacional" : cityName(area)
+      });
+    }
+
+    // --- Aba Exclusivos Visual (opcional)
+    const wx = findSheet(wb, CONFIG.abaExclusivos);
+    if (wx) {
+      const rx = sheetRows(wx);
+      const hx = headerInfo(rx, "ORIGEM");
+      if (hx) {
+        const X = {
+          id: hx.col("ID DO BLOQUEIO", "ID"), loc: hx.col("LOCALIZADOR"), pacote: hx.col("PACOTE"),
+          orig: hx.col("ORIGEM"), dest: hx.col("DESTINO"), ida: hx.col("IDA"), volta: hx.col("VOLTA"),
+          cia: hx.col("CIA"), lug: hx.col("LUGARES"), valor: hx.col("VALOR", "PRECO")
+        };
+        for (let i = hx.index + 1; i < rx.length; i++) {
+          const r = rx[i];
+          const ds = toISODate(r[X.ida]);
+          if (!ds || !r[X.orig]) continue;
+          const o = normKey(r[X.orig]), d = normKey(r[X.dest]);
+          const isCode = (s) => /^[A-Z]{3}$/.test(s);
+          const dr = toISODate(r[X.volta]);
+          const dias = dr ? Math.round((new Date(dr) - new Date(ds)) / 86400000) + 1 : null;
+          // A célula de ID às vezes vem formatada como data no Excel: aqui ela chega como número (ex.: 1434)
+          const idRaw = X.id >= 0 ? r[X.id] : null;
+          out.push({
+            tipo: "Exclusivo Visual",
+            origem: isCode(o) ? cityFromIata(o) : cityName(o),
+            destino: isCode(d) ? cityFromIata(d) : cityName(d),
+            rota: isCode(o) && isCode(d) ? o + d : null,
+            ds, dr, dias, noites: dias ? dias - 1 : null,
+            cia: normKey(r[X.cia]),
+            valor: X.valor >= 0 ? toNumber(r[X.valor]) : null,
+            lug: toNumber(r[X.lug]),
+            area: null,
+            id: idRaw == null ? null : String(typeof idRaw === "number" ? Math.round(idRaw) : idRaw),
+            localizador: X.loc >= 0 && r[X.loc] ? String(r[X.loc]).trim() : null,
+            pacote: X.pacote >= 0 && r[X.pacote] ? String(r[X.pacote]).trim() : null
+          });
+        }
+      } else avisos.push("Aba de exclusivos sem cabeçalho reconhecível");
+    }
+    if (!out.length) throw new Error("Nenhuma linha válida encontrada na planilha.");
+    return out;
+  }
+
+  /* ----------------------------------------------------------------
+     3. CACHE LOCAL (IndexedDB) — permite abrir sem internet
+     ---------------------------------------------------------------- */
+  const DB = {
+    _db: null,
+    open() {
+      if (this._db) return Promise.resolve(this._db);
+      return new Promise((res, rej) => {
+        if (!("indexedDB" in window)) return rej(new Error("sem IndexedDB"));
+        const req = indexedDB.open("vt-oportunidades", 1);
+        req.onupgradeneeded = () => req.result.createObjectStore("kv");
+        req.onsuccess = () => { this._db = req.result; res(this._db); };
+        req.onerror = () => rej(req.error);
+      });
+    },
+    async get(key) {
+      try {
+        const db = await this.open();
+        return await new Promise((res, rej) => {
+          const r = db.transaction("kv").objectStore("kv").get(key);
+          r.onsuccess = () => res(r.result || null); r.onerror = () => rej(r.error);
+        });
+      } catch (e) { return null; }
+    },
+    async set(key, val) {
+      try {
+        const db = await this.open();
+        await new Promise((res, rej) => {
+          const t = db.transaction("kv", "readwrite");
+          t.objectStore("kv").put(val, key);
+          t.oncomplete = res; t.onerror = () => rej(t.error);
+        });
+      } catch (e) { console.warn("Não foi possível salvar o cache:", e); }
+    }
+  };
+
+  /* ----------------------------------------------------------------
+     4. ESTADO
+     ---------------------------------------------------------------- */
+  const EMPTY_FILTERS = { origem: "", destino: "", cia: "", area: "", dataIni: "", dataFim: "", lugaresMin: "", valorMax: "", exclusivas: false };
+  const state = {
+    all: [], filtered: [], renderedCount: 0, pageSize: 24, lastMonth: null,
+    sort: "data_asc", search: "", filters: { ...EMPTY_FILTERS },
+    meta: null, lastCheck: 0, checking: false
+  };
+
+  function setData(records) {
+    const hoje = todayISO();
+    state.all = CONFIG.ocultarVoosPassados ? records.filter(r => !r.ds || r.ds >= hoje) : records.slice();
+    state.all.forEach(r => {
+      r._excl = r.tipo !== "Bloqueio";
+      r._blob = stripAccents([r.tipo, r._excl ? "exclusiva exclusivo" : "", r.origem, r.destino, r.rota, r.cia, r.area, r.localizador, r.id, r.pacote,
+        fmtDateBR(r.ds), fmtDateBR(r.dr)].filter(Boolean).join(" ")).toLowerCase();
+    });
+    populateFilterOptions();
+    applyFilters();
+  }
+
+  /* ----------------------------------------------------------------
+     5. STATUS E ATUALIZAÇÃO
+     ---------------------------------------------------------------- */
+  function setStatus(kind, text) { $("statusLine").className = "status " + kind; $("statusText").textContent = text; }
+  function stampText() { const m = state.meta; return m ? "Atualizado em " + fmtStamp(m.publishedAt || m.checkedAt) : ""; }
+
+  async function checkForUpdates(opts = {}) {
+    if (state.checking) return;
+    state.checking = true;
+    if (!state.all.length || opts.manual) setStatus("checking", "Verificando atualizações…");
+    try {
+      const resp = await fetch(CONFIG.arquivoDados, { cache: "no-cache" });
+      if (!resp.ok) throw new Error("O arquivo de dados não foi encontrado (erro " + resp.status + ").");
+      const etag = resp.headers.get("ETag") || "";
+      const lm = resp.headers.get("Last-Modified") || "";
+      const m = state.meta;
+      const unchanged = m && state.all.length && ((etag && etag === m.etag) || (!etag && lm && lm === m.lastModified));
+      if (unchanged) {
+        m.checkedAt = Date.now(); await DB.set("meta", m);
+        setStatus("", stampText());
+        if (opts.manual) toast("Você já está com a versão mais recente.");
+      } else {
+        if (typeof XLSX === "undefined") throw new Error("O leitor de planilha não carregou. Recarregue a página.");
+        const records = parseWorkbook(await resp.arrayBuffer());
+        const lmMs = lm ? Date.parse(lm) : NaN;
+        state.meta = { etag, lastModified: lm, publishedAt: isNaN(lmMs) ? Date.now() : lmMs, checkedAt: Date.now() };
+        const hadData = state.all.length > 0;
+        await DB.set("records", records); await DB.set("meta", state.meta);
+        setData(records);
+        setStatus("", stampText());
+        if (hadData) toast("Saídas atualizadas.");
+      }
+      state.lastCheck = Date.now();
+    } catch (err) {
+      console.warn("Falha ao buscar atualização:", err);
+      if (state.all.length) setStatus("offline", (navigator.onLine ? "Sem conexão com o servidor · " : "Sem internet · ") + stampText().replace("Atualizado", "versão salva"));
+      else { setStatus("offline", "Sem conexão e nenhuma versão salva"); renderLoadError(err); }
+    } finally {
+      state.checking = false; hideSplash();
+    }
+  }
+
+  /* ----------------------------------------------------------------
+     6. FILTROS E ORDENAÇÃO
+     ---------------------------------------------------------------- */
+  function populateFilterOptions() {
+    const o = new Set(), d = new Set(), c = new Set();
+    state.all.forEach(r => { if (r.origem) o.add(r.origem); if (r.destino) d.add(r.destino); if (r.cia) c.add(r.cia); });
+    fillSelect($("fOrigem"), o, "Todas"); fillSelect($("fDestino"), d, "Todos"); fillSelect($("fCia"), c, "Todas");
+  }
+  function fillSelect(sel, values, allLabel) {
+    const current = sel.value;
+    const sorted = Array.from(values).sort((a, b) => a.localeCompare(b, "pt-BR"));
+    sel.innerHTML = `<option value="">${allLabel}</option>` + sorted.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
+    if (sorted.includes(current)) sel.value = current;
+  }
+
+  function matches(r, f, terms) {
+    if (terms.length && !terms.every(t => r._blob.includes(t))) return false;
+    if (f.origem && r.origem !== f.origem) return false;
+    if (f.destino && r.destino !== f.destino) return false;
+    if (f.cia && r.cia !== f.cia) return false;
+    if (f.area && r.area !== f.area) return false;
+    if (f.exclusivas && !r._excl) return false;
+    if (f.dataIni && r.ds && r.ds < f.dataIni) return false;
+    if (f.dataFim && r.ds && r.ds > f.dataFim) return false;
+    if (f.lugaresMin !== "" && (r.lug == null || r.lug < Number(f.lugaresMin))) return false;
+    if (f.valorMax !== "" && (r.valor == null || r.valor > Number(f.valorMax))) return false;
+    return true;
+  }
+  function searchTerms() { return stripAccents(state.search || "").toLowerCase().trim().split(/\s+/).filter(Boolean); }
+  function countWith(f) { const t = searchTerms(); let n = 0; for (const r of state.all) if (matches(r, f, t)) n++; return n; }
+
+  function applyFilters() {
+    const f = state.filters, terms = searchTerms();
+    state.filtered = state.all.filter(r => matches(r, f, terms));
+    sortFiltered(); updateIndicators(); updateFilterUI(); renderReset();
+  }
+
+  function sortFiltered() {
+    const s = state.sort;
+    const cmpStr = (a, b) => (a || "").localeCompare(b || "", "pt-BR");
+    const by = {
+      data_asc: (a, b) => (a.ds || "9999").localeCompare(b.ds || "9999") || (a.valor ?? 1e9) - (b.valor ?? 1e9),
+      data_desc: (a, b) => (b.ds || "0000").localeCompare(a.ds || "0000"),
+      preco_asc: (a, b) => (a.valor ?? Infinity) - (b.valor ?? Infinity),
+      preco_desc: (a, b) => (b.valor ?? -Infinity) - (a.valor ?? -Infinity),
+      lugares_desc: (a, b) => (b.lug || 0) - (a.lug || 0),
+      origem: (a, b) => cmpStr(a.origem, b.origem),
+      destino: (a, b) => cmpStr(a.destino, b.destino)
+    }[s];
+    // Na ordem padrão, as saídas Exclusivas abrem a lista
+    state.filtered.sort(s === "data_asc" ? (a, b) => (b._excl - a._excl) || by(a, b) : by);
+  }
+
+  function activeFilterCount() {
+    const f = state.filters;
+    return ["origem", "destino", "cia", "dataIni", "dataFim", "lugaresMin", "valorMax"].filter(k => f[k] !== "").length
+      + (f.area ? 1 : 0) + (f.exclusivas ? 1 : 0);
+  }
+  function updateFilterUI() {
+    const n = activeFilterCount(), b = $("filterCountBadge");
+    b.textContent = n; b.style.display = n ? "inline-flex" : "none";
+    const f = state.filters;
+    const chip = f.exclusivas && !f.area ? "excl" : (!f.exclusivas ? f.area : null);
+    document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.chip === chip)));
+  }
+
+  function updateIndicators() {
+    const arr = state.filtered;
+    animateNumber($("indTotal"), arr.length);
+    animateNumber($("indLugares"), arr.reduce((s, r) => s + (r.lug || 0), 0));
+    animateNumber($("indCias"), new Set(arr.map(r => r.cia).filter(Boolean)).size);
+    animateNumber($("indRotas"), new Set(arr.map(r => r.origem + "-" + r.destino)).size);
+    $("countNum").textContent = arr.length.toLocaleString("pt-BR");
+  }
+  function animateNumber(el, target) {
+    const start = parseInt(el.textContent.replace(/\D/g, ""), 10) || 0;
+    if (start === target || matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = target.toLocaleString("pt-BR"); return; }
+    const dur = 380, t0 = performance.now();
+    (function step(t) { const p = Math.min(1, (t - t0) / dur); el.textContent = Math.round(start + (target - start) * p).toLocaleString("pt-BR"); if (p < 1) requestAnimationFrame(step); })(t0);
+  }
+
+  /* ----------------------------------------------------------------
+     7. RENDERIZAÇÃO
+     ---------------------------------------------------------------- */
+  function seatsClass(n) { return n == null ? "" : n <= 0 ? "none" : n <= 3 ? "low" : ""; }
+  function codes(r) {
+    if (r.rota && r.rota.length === 6) return r.rota.slice(0, 3) + " · " + r.rota.slice(3);
+    return "";
+  }
+
+  function cardHtml(r, idx) {
+    const valor = fmtCurrency(r.valor);
+    const semTaxa = fmtCurrency(valorSemTaxa(r.valor));
+    const periodo = [r.dias ? `${r.dias} dias` : "", r.noites != null ? `${r.noites} noites` : ""].filter(Boolean).join(" · ");
+    const lug = r.lug == null ? "—" : `${r.lug} ${r.lug === 1 ? "lugar" : "lugares"}`;
+    const extra = [r.localizador ? `Localizador <b>${escapeHtml(r.localizador)}</b>` : "", r.id ? `ID <b>${escapeHtml(r.id)}</b>` : ""].filter(Boolean).join(" · ");
+    const corpo = `
+      <div class="voo-topo">
+        <div class="rota">
+          <div class="cidades">${escapeHtml(r.origem || "—")}<span class="seta" aria-label="para"></span>${escapeHtml(r.destino || "—")}</div>
+          ${codes(r) ? `<div class="codigos">${codes(r)}${r.area ? " · " + escapeHtml(r.area) : ""}</div>` : (r.area ? `<div class="codigos">${escapeHtml(r.area)}</div>` : "")}
+        </div>
+        <div class="preco">
+          ${valor ? `<b>${valor}</b><span>final c/ taxas</span>` : `<span class="consulta">Sob consulta</span>`}
+          ${semTaxa ? `<span style="display:block">${semTaxa} s/ taxas (estim.)</span>` : ""}
+        </div>
+      </div>
+      <div class="datas">
+        <div><div class="lbl">Ida</div><div class="d">${fmtDateBR(r.ds)}<small>${weekday(r.ds)}</small></div></div>
+        <div><div class="lbl">Volta</div><div class="d">${fmtDateBR(r.dr)}<small>${weekday(r.dr)}</small></div></div>
+      </div>
+      <div class="voo-base">
+        <span class="lugares ${seatsClass(r.lug)}"><i class="fa-solid fa-chair" aria-hidden="true"></i>${lug}</span>
+        <span class="meta"><b>${escapeHtml(r.cia || "Companhia não informada")}</b>${periodo ? "<br>" + periodo : ""}${extra ? "<br>" + extra : ""}</span>
+        <button class="btn-enviar" data-share="${idx}" aria-label="Enviar esta saída"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>`;
+    if (r._excl) {
+      return `<article class="voo exclusiva">
+        <div class="capa"><span class="selo">EXCLUSIVA</span><span class="tag">COMO CADA EXPERIÊNCIA DEVE SER</span></div>
+        <div class="corpo">${corpo}</div>
+      </article>`;
+    }
+    return `<article class="voo">${corpo}</article>`;
+  }
+
+  function monthHeader(iso) {
+    if (!iso) return "";
+    const [y, m] = iso.split("-").map(Number);
+    return `<h2 class="mes">${MESES[m - 1]} <small>${y}</small></h2>`;
+  }
+
+  function renderLoadError(err) {
+    grid.innerHTML = `<div class="vazio"><div class="marca">${MARCA_SVG}</div>
+      <h3>Não foi possível carregar as saídas</h3>
+      <p>${navigator.onLine ? escapeHtml(err && err.message ? err.message : "Erro ao ler os dados.") : "Conecte-se à internet e toque em Tentar de novo."}</p>
+      <button class="btn btn-primario" style="margin-top:16px" id="btnRetry">Tentar de novo</button></div>`;
+    $("btnRetry").addEventListener("click", () => checkForUpdates({ manual: true }));
+  }
+
+  function renderReset() {
+    grid.innerHTML = ""; state.renderedCount = 0; state.lastMonth = null;
+    if (!state.all.length) return;
+    if (!state.filtered.length) {
+      grid.innerHTML = `<div class="vazio"><div class="marca">${MARCA_SVG}</div>
+        <h3>Nenhuma saída encontrada</h3>
+        <p>Mude o termo de busca ou limpe os filtros para ver todas as saídas.</p>
+        <button class="btn btn-linha" style="margin-top:16px" id="btnLimparVazio">Limpar filtros</button></div>`;
+      $("btnLimparVazio").addEventListener("click", clearAll);
+      return;
+    }
+    renderNextBatch();
+  }
+
+  function renderNextBatch() {
+    const start = state.renderedCount, end = Math.min(state.filtered.length, start + state.pageSize);
+    if (start >= end) return;
+    const byMonth = state.sort === "data_asc" || state.sort === "data_desc";
+    let html = "";
+    for (let i = start; i < end; i++) {
+      const r = state.filtered[i];
+      if (r._excl && state.sort === "data_asc") {
+        if (state.lastMonth !== "excl") { html += `<h2 class="mes">Exclusivas <small>Visual Turismo</small></h2>`; state.lastMonth = "excl"; }
+      } else if (byMonth && r.ds) {
+        const mk = r.ds.slice(0, 7);
+        if (mk !== state.lastMonth) { html += monthHeader(r.ds); state.lastMonth = mk; }
+      }
+      html += cardHtml(r, i);
+    }
+    const old = $("sentinel"); if (old) old.remove();
+    grid.insertAdjacentHTML("beforeend", html);
+    state.renderedCount = end;
+    if (end < state.filtered.length) {
+      grid.insertAdjacentHTML("beforeend", `<div id="sentinel">Carregando mais saídas…</div>`);
+      observeSentinel();
+    }
+  }
+  let io = null;
+  function observeSentinel() {
+    const s = $("sentinel"); if (!s) return;
+    if (io) io.disconnect();
+    io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) renderNextBatch(); }), { rootMargin: "500px" });
+    io.observe(s);
+  }
+
+  /* ----------------------------------------------------------------
+     8. AÇÕES
+     ---------------------------------------------------------------- */
+  function toast(msg) {
+    const t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toast._tm); toast._tm = setTimeout(() => t.classList.remove("show"), 2600);
+  }
+  function offerText(r) {
+    const linhas = [
+      `${r._excl ? "Saída EXCLUSIVA" : "Bloqueio aéreo"} · Visual Turismo`,
+      `${r.origem} → ${r.destino}${codes(r) ? " (" + codes(r).replace(" · ", "-") + ")" : ""}`,
+      `Ida ${fmtDateBR(r.ds)} (${weekday(r.ds)}) · Volta ${fmtDateBR(r.dr)} (${weekday(r.dr)})`,
+      `${r.cia}${r.dias ? " · " + r.dias + " dias" : ""}${r.noites != null ? " / " + r.noites + " noites" : ""}`,
+      r.valor != null ? `${fmtCurrency(r.valor)} final c/ taxas` : "Valor sob consulta",
+      r.lug != null ? `${r.lug} ${r.lug === 1 ? "lugar disponível" : "lugares disponíveis"}` : ""
+    ].filter(Boolean);
+    return linhas.join("\n");
+  }
+  function shareText(text, okMsg) {
+    if (navigator.share) { navigator.share({ text }).catch(() => {}); return; }
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast(okMsg), () => toast("Não foi possível copiar."));
+    else toast("Compartilhamento indisponível neste navegador.");
+  }
+  function exportExcel() {
+    try {
+      if (typeof XLSX === "undefined") { toast("Exportação indisponível neste navegador."); return; }
+      const rows = state.filtered.map(r => {
+        const o = {
+          "Tipo": r._excl ? "Exclusiva" : "Bloqueio", "Origem": r.origem, "Destino": r.destino, "Rota": r.rota || "",
+          "Ida": fmtDateBR(r.ds), "Volta": fmtDateBR(r.dr), "Dias": r.dias ?? "", "Noites": r.noites ?? "",
+          "Companhia": r.cia, "Lugares disponíveis": r.lug ?? "",
+          "Valor final c/ taxas (R$)": r.valor ?? "Sob consulta", "Área": r.area || ""
+        };
+        if (CONFIG.regraSemTaxa) o["Valor s/ taxas estimado (R$)"] = valorSemTaxa(r.valor) ?? "";
+        if (r.localizador) o["Localizador"] = r.localizador;
+        return o;
+      });
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), "Oportunidades");
+      XLSX.writeFile(wb, `oportunidades_visual_turismo_${todayISO()}.xlsx`);
+      toast("Planilha exportada.");
+    } catch (err) { console.error(err); toast("Não foi possível exportar neste navegador."); }
+  }
+
+  /* ----------------------------------------------------------------
+     9. PAINEL DE FILTROS
+     ---------------------------------------------------------------- */
+  const FIELD_MAP = [["fOrigem", "origem"], ["fDestino", "destino"], ["fCia", "cia"], ["fArea", "area"], ["fDataIni", "dataIni"], ["fDataFim", "dataFim"], ["fLugaresMin", "lugaresMin"], ["fValorMax", "valorMax"]];
+  function readPanel() {
+    const f = { ...EMPTY_FILTERS };
+    FIELD_MAP.forEach(([id, k]) => f[k] = $(id).value);
+    f.exclusivas = $("fExclusivas").checked;
+    return f;
+  }
+  function writePanel(f) {
+    FIELD_MAP.forEach(([id, k]) => $(id).value = f[k]);
+    $("fExclusivas").checked = f.exclusivas;
+  }
+  function updatePanelCount() {
+    const n = countWith(readPanel());
+    $("btnVerResultados").textContent = n ? `Ver ${n.toLocaleString("pt-BR")} ${n === 1 ? "saída" : "saídas"}` : "Nenhuma saída";
+  }
+  let lastFocus = null;
+  function openPanel() {
+    lastFocus = document.activeElement;
+    writePanel(state.filters); updatePanelCount();
+    $("folha").classList.add("aberta"); $("folhaFundo").classList.add("aberta");
+    $("folha").setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    setTimeout(() => $("folhaFechar").focus(), 50);
+  }
+  function closePanel() {
+    $("folha").classList.remove("aberta"); $("folhaFundo").classList.remove("aberta");
+    $("folha").setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    if (lastFocus) lastFocus.focus();
+  }
+  function clearAll() {
+    state.filters = { ...EMPTY_FILTERS }; writePanel(state.filters);
+    $("globalSearch").value = ""; state.search = ""; $("searchClear").style.display = "none";
+    applyFilters();
+  }
+
+  /* ----------------------------------------------------------------
+     10. TEMA E INSTALAÇÃO
+     ---------------------------------------------------------------- */
+  const darkMQ = window.matchMedia ? matchMedia("(prefers-color-scheme: dark)") : null;
+  function savedTheme() { try { return localStorage.getItem("vt_dark"); } catch (e) { return null; } }
+  function applyTheme() {
+    const s = savedTheme();
+    const dark = s === "1" || (s === null && darkMQ && darkMQ.matches);
+    document.body.classList.toggle("dark", dark);
+    $("darkToggle").innerHTML = dark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+  }
+  function setupInstallBanner() {
+    const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+    let dismissed = false; try { dismissed = localStorage.getItem("vt_install_dismissed") === "1"; } catch (e) {}
+    if (standalone || dismissed) return;
+    const banner = $("installBanner"), text = $("installText");
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    if (isIOS) {
+      text.innerHTML = 'Instale o app: no Safari, toque em <b>Compartilhar</b> <i class="fa-solid fa-arrow-up-from-bracket"></i> e depois em <b>Adicionar à Tela de Início</b>.';
+      banner.hidden = false;
+    }
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      const prompt = e;
+      text.innerHTML = 'Instale o app na tela inicial para abrir mais rápido, mesmo sem internet.<div class="acoes"><button class="btn btn-primario" id="btnInstall">Instalar app</button></div>';
+      banner.hidden = false;
+      $("btnInstall").addEventListener("click", async () => { prompt.prompt(); await prompt.userChoice.catch(() => {}); banner.hidden = true; });
+    });
+    $("installClose").addEventListener("click", () => { banner.hidden = true; try { localStorage.setItem("vt_install_dismissed", "1"); } catch (e) {} });
+  }
+
+  /* ----------------------------------------------------------------
+     11. EVENTOS
+     ---------------------------------------------------------------- */
+  function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+
+  function bindEvents() {
+    $("globalSearch").addEventListener("input", debounce((e) => {
+      state.search = e.target.value; $("searchClear").style.display = state.search ? "grid" : "none"; applyFilters();
+    }, 180));
+    $("globalSearch").addEventListener("keydown", (e) => { if (e.key === "Enter") e.target.blur(); });
+    $("searchClear").addEventListener("click", () => { $("globalSearch").value = ""; state.search = ""; $("searchClear").style.display = "none"; applyFilters(); });
+
+    document.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => {
+      const v = c.dataset.chip;
+      state.filters.area = (v === "Nacional" || v === "Internacional") ? v : "";
+      state.filters.exclusivas = v === "excl";
+      applyFilters();
+    }));
+
+    $("btnFiltros").addEventListener("click", openPanel);
+    $("folhaFechar").addEventListener("click", closePanel);
+    $("folhaFundo").addEventListener("click", closePanel);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("folha").classList.contains("aberta")) closePanel(); });
+    $("folha").addEventListener("input", debounce(updatePanelCount, 150));
+    $("folha").addEventListener("change", updatePanelCount);
+    $("btnVerResultados").addEventListener("click", () => { state.filters = readPanel(); applyFilters(); closePanel(); scrollTo({ top: $("resultsGrid").offsetTop - 160, behavior: "smooth" }); });
+    $("btnLimpar").addEventListener("click", () => { writePanel(EMPTY_FILTERS); updatePanelCount(); });
+
+    $("sortSelect").addEventListener("change", (e) => { state.sort = e.target.value; sortFiltered(); renderReset(); });
+    $("btnExport").addEventListener("click", exportExcel);
+    $("btnPrint").addEventListener("click", () => window.print());
+    $("btnShare").addEventListener("click", () => {
+      const url = location.href.split("#")[0];
+      if (navigator.share) navigator.share({ title: "Oportunidades aéreas · Visual Turismo", url }).catch(() => {});
+      else shareText(url, "Link copiado.");
+    });
+    grid.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-share]"); if (!b) return;
+      const r = state.filtered[Number(b.dataset.share)];
+      if (r) shareText(offerText(r), "Dados da saída copiados.");
+    });
+    $("statusLine").addEventListener("click", () => checkForUpdates({ manual: true }));
+
+    $("darkToggle").addEventListener("click", () => {
+      const dark = !document.body.classList.contains("dark");
+      try { localStorage.setItem("vt_dark", dark ? "1" : "0"); } catch (e) {}
+      applyTheme();
+    });
+    if (darkMQ && darkMQ.addEventListener) darkMQ.addEventListener("change", applyTheme);
+
+    window.addEventListener("scroll", debounce(() => $("backToTop").classList.toggle("show", scrollY > 900), 60), { passive: true });
+    $("backToTop").addEventListener("click", () => scrollTo({ top: 0, behavior: "smooth" }));
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && Date.now() - state.lastCheck > CONFIG.reverificarAposMinutos * 60000) checkForUpdates();
+    });
+    window.addEventListener("online", () => checkForUpdates());
+    window.addEventListener("offline", () => { if (state.all.length) setStatus("offline", "Sem internet · " + stampText().replace("Atualizado", "versão salva")); });
+  }
+
+  /* ----------------------------------------------------------------
+     12. INICIALIZAÇÃO
+     ---------------------------------------------------------------- */
+  function hideSplash() { const s = $("splash"); if (s) s.classList.add("hide"); }
+
+  async function init() {
+    applyTheme(); bindEvents(); setupInstallBanner();
+    const [records, meta] = await Promise.all([DB.get("records"), DB.get("meta")]);
+    if (records && records.length) {
+      state.meta = meta; setData(records);
+      setStatus("checking", stampText() + " · verificando…"); hideSplash();
+    }
+    checkForUpdates();
+    if ("serviceWorker" in navigator && location.protocol !== "file:") {
+      navigator.serviceWorker.register("sw.js").catch(e => console.warn("Service worker não registrado:", e));
+    }
+  }
+  document.addEventListener("DOMContentLoaded", () => {
+    init().catch(err => { console.error("Erro na inicialização:", err); hideSplash(); renderLoadError(err); });
+  });
+})();
+</script>
+</body>
+</html>
