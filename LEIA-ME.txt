@@ -1,0 +1,52 @@
+OPORTUNIDADES AÉREAS · VISUAL TURISMO — VERSÃO 1.0
+
+PUBLICAR O APP (GitHub Pages)
+  1. No repositório: Add file > Upload files > envie TODOS os arquivos desta pasta > Commit changes.
+     Arquivos com o mesmo nome são substituídos.
+  2. Settings > Pages > Branch: main / (root) > Save (só na primeira vez).
+  3. Em 1 a 2 minutos o app está no ar. Quem já tem o app instalado recebe a versão nova
+     na segunda vez que abrir.
+
+ATUALIZAR AS SAÍDAS (dia a dia)
+  1. Renomeie a planilha para exatamente: dados.xlsx
+  2. No GitHub: Add file > Upload files > envie só o dados.xlsx > Commit changes.
+  3. Em 1 a 2 minutos todos recebem a versão nova (ou ao puxar a tela para baixo).
+
+  A planilha precisa de uma aba "ESTOQUE GERAL" com as colunas:
+    BUSINESS, OD, CIDADE_ORIGEM, CIDADE_DESTINO, DATA_EMBARQUE, DATA_RETORNO,
+    NR_DIAS, NR_NOITES, DS_CIA, PREÇO FINAL C/ TAXA, DISPO.
+  Colunas opcionais (acrescente no fim quando quiser):
+    EXCLUSIVA    escreva SIM nas saídas exclusivas: ganham selo e destaque
+    LOCALIZADOR  aparece no card da saída
+
+  O que o app faz sozinho:
+    - esconde saídas com data de embarque já passada;
+    - junta linhas idênticas, somando os lugares;
+    - marca como "Nova" o que entrou e "Preço baixou" o que ficou mais barato
+      desde a planilha anterior;
+    - saídas que saírem da planilha continuam visíveis por 7 dias como "Esgotado"
+      (cinza, sem compartilhar), e depois somem.
+
+AJUSTES (bloco CONFIG no início do script do index.html)
+  versao                 número exibido no menu
+  linkReserva            endereço do botão "Reservar" do topo
+  diasEsgotadoVisivel    por quantos dias uma saída removida aparece como "Esgotado"
+  ocultarVoosPassados    true = esconde saídas anteriores a hoje
+  regraSemTaxa           null = não mostra; ex.: { tipo: "percentual", valor: 10 }
+  datasPorGrupo          quantas datas aparecem ao abrir uma rota
+  Ao alterar o index.html, mude a VERSAO no início do sw.js (ex.: 1.0.0 -> 1.0.1).
+  Para trocar o link de reserva, substitua o endereço nas 3 vezes em que ele aparece
+  no index.html (procure por "infotravel"): CONFIG, botão do topo e menu.
+
+LINKS DIRETOS (para divulgar)
+  .../#de=São Paulo&para=Maceió
+  .../#de=São Paulo&para=Maceió&mes=2026-12
+  .../#temporada=reveillon   (também: carnaval, semana-santa, julho)
+  .../#ultimos=1             (saídas com até 3 lugares)
+  .../#proximos=30           (saídas nos próximos 30 dias)
+  O menu "Compartilhar esta busca" gera o link da busca atual.
+
+COMPARTILHAR (agentes)
+  "Compartilhar" em cada saída, ou "Compartilhar opções" dentro da rota para marcar várias.
+  Formato: Texto ou Imagem. Identificação: Visual Turismo, Minha agência (nome e logo,
+  salvos só no aparelho do agente) ou Sem identificação.
